@@ -1,0 +1,35 @@
+# Avvio completo: backend + MongoDB
+#   1) ./mvnw package          (genera target/quarkus-app)
+#   2) docker compose up --build
+services:
+
+  mongodb:
+    image: mongo:8.0
+    container_name: gestione-spese-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: src/main/docker/Dockerfile.jvm
+    image: gestione-spese-online-backend:latest
+    container_name: gestione-spese-backend
+    ports:
+      - "8080:8080"
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017
+      MONGODB_DATABASE: gestione-spese
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+volumes:
+  mongo-data:
