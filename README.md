@@ -1,8 +1,5 @@
 # challenge-esselunga-backend
 Progetto realizzato per un colloquio con Esselunga.
-
-# Challenge Tecnica Sviluppatore Esselunga
-
 Al candidato è richiesto lo sviluppo della parte backend e frontend.
 
 
