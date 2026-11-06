@@ -1,5 +1,6 @@
 package it.esselunga.gestionespese.service;
 
+import io.quarkus.panache.common.Sort;
 import it.esselunga.gestionespese.dto.CreazioneSpesaDto;
 import it.esselunga.gestionespese.dto.SpesaDto;
 import it.esselunga.gestionespese.entity.Articolo;
@@ -46,8 +47,22 @@ public class SpesaService {
     }
 
     /**
-     * Creazione di una spesa.
+     * Lista di tutte le spese con il loro stato.
+     * <p>
+     * Filtri e ordinamenti personalizzati sono gestiti dal frontend: il backend
+     * restituisce l'intera lista, dalla più recente alla meno recente.
      *
+     * @return tutte le spese, ordinate per data di creazione decrescente
+     */
+    public List<SpesaDto> lista() {
+        return spesaRepository.listAll(Sort.by("dataCreazione", Sort.Direction.Descending)).stream()
+                .map(spesaMapper::toDto)
+                .toList();
+    }
+
+    /**
+     * Creazione di una spesa.
+     * <p>
      * verifica che il magazzino esista;
      * verifica che ogni articolo esista e compaia una sola volta;
      * copia nome e prezzo dell'articolo in ogni elemento e calcola prezzoTotale e totale;
