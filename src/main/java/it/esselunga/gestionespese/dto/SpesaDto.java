@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Spesa restituita dalle API (UC1, UC2, UC3).
+ * Spesa restituita dalle API.
  */
 public class SpesaDto {
 
@@ -28,7 +28,6 @@ public class SpesaDto {
 
     private Instant dataUltimaModifica;
 
-    /** Da rimandare nella richiesta di modifica (UC2) per il controllo delle modifiche concorrenti. */
     private Long versione;
 
     private BigDecimal totale;

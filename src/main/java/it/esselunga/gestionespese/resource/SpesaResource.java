@@ -55,7 +55,7 @@ public class SpesaResource {
     }
 
     /**
-     * UC2 - Modifica parziale di una spesa (nome cliente, indirizzo e posizione di consegna).
+     * Modifica parziale di una spesa (nome cliente, indirizzo e posizione di consegna).
      *
      * @return 200 con la spesa aggiornata; 400 se la richiesta non è valida; 404 se la spesa non esiste;
      *         409 se la spesa non è più modificabile o è stata modificata nel frattempo

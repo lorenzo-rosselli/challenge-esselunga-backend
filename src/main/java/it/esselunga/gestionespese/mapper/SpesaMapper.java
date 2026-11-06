@@ -28,8 +28,6 @@ public class SpesaMapper {
         this.posizioneMapper = posizioneMapper;
     }
 
-    // --- Richiesta di creazione (UC1) -> entity ---
-
     public Spesa toEntity(CreazioneSpesaDto dto) {
         if (dto == null) {
             return null;

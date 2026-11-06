@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Richiesta di creazione di una spesa (UC1).
+ * Richiesta di creazione di una spesa.
  * Id, stato, date, versione e totali non sono accettati dal client: li imposta il server.
  */
 public class CreazioneSpesaDto {
@@ -29,7 +29,6 @@ public class CreazioneSpesaDto {
     @Pattern(regexp = "^[0-9a-fA-F]{24}$", message = "Il magazzino non è un identificativo valido")
     private String magazzinoId;
 
-    /** Almeno un elemento. */
     @NotEmpty(message = "La spesa deve contenere almeno un articolo")
     @Valid
     private List<@NotNull(message = "Gli elementi della spesa non possono essere nulli") ElementoCreazioneSpesaDto> articoli = new ArrayList<>();

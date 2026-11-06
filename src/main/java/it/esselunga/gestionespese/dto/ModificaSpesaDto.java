@@ -8,29 +8,25 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
 
 /**
- * Richiesta di modifica parziale di una spesa (UC2).
+ * Richiesta di modifica parziale di una spesa.
  * <p>
  * Sono modificabili solo nome del cliente e dati di consegna, e solo negli stati
  * CREATA e IN_PREPARAZIONE. Il client invia soltanto i campi da cambiare:
  * quelli assenti (null) restano invariati.
  * Indirizzo e posizione di consegna vanno modificati insieme, per mantenerli coerenti
- * (la posizione è usata dal calcolo del percorso, UC4).
+ * (la posizione è usata dal calcolo del percorso).
  */
 public class ModificaSpesaDto {
 
-    /** Se presente, non può essere vuoto. */
     @Pattern(regexp = ".*\\S.*", message = "Il nome del cliente non può essere vuoto")
     private String nomeCliente;
 
-    /** Se presente, non può essere vuoto. Va inviato insieme a posizioneConsegna. */
     @Pattern(regexp = ".*\\S.*", message = "L'indirizzo di consegna non può essere vuoto")
     private String indirizzoConsegna;
 
-    /** Va inviata insieme a indirizzoConsegna. */
     @Valid
     private PosizioneDto posizioneConsegna;
 
-    /** Versione letta dal client: se nel frattempo la spesa è cambiata, la modifica viene rifiutata. */
     @NotNull(message = "La versione è obbligatoria")
     @PositiveOrZero(message = "La versione non può essere negativa")
     private Long versione;

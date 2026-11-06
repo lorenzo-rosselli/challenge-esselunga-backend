@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class SpesaService {
 
-    /** Stati in cui la spesa è modificabile (UC2): prima che parta dal magazzino. */
+    /** Stati in cui la spesa è modificabile. */
     private static final Set<StatoSpesa> STATI_MODIFICABILI = EnumSet.of(StatoSpesa.CREATA, StatoSpesa.IN_PREPARAZIONE);
 
     private final SpesaRepository spesaRepository;

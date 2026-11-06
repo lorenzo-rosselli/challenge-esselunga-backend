@@ -10,13 +10,11 @@ import jakarta.validation.constraints.NotNull;
  */
 public class PosizioneDto {
 
-    /** Latitudine, tra -90 e 90. */
     @NotNull(message = "La latitudine è obbligatoria")
     @DecimalMin(value = "-90.0", message = "La latitudine deve essere compresa tra -90 e 90")
     @DecimalMax(value = "90.0", message = "La latitudine deve essere compresa tra -90 e 90")
     private Double latitudine;
 
-    /** Longitudine, tra -180 e 180. */
     @NotNull(message = "La longitudine è obbligatoria")
     @DecimalMin(value = "-180.0", message = "La longitudine deve essere compresa tra -180 e 180")
     @DecimalMax(value = "180.0", message = "La longitudine deve essere compresa tra -180 e 180")

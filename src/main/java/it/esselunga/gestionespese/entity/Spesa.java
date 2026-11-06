@@ -19,13 +19,10 @@ public class Spesa {
 
     private String nomeCliente;
 
-    /** Modificabile in UC2. */
     private String indirizzoConsegna;
 
-    /** Modificabile in UC2 insieme all'indirizzo. */
     private Posizione posizioneConsegna;
 
-    /** Riferimento al magazzino di partenza e rientro del percorso (UC4). */
     private ObjectId magazzinoId;
 
     private StatoSpesa stato;
@@ -34,10 +31,8 @@ public class Spesa {
 
     private Instant dataUltimaModifica;
 
-    /** Contatore per le modifiche concorrenti: parte da 0, +1 a ogni modifica. */
     private long versione;
 
-    /** Somma dei prezzoTotale degli elementi, calcolata dal server. */
     private BigDecimal totale;
 
     private List<ElementoSpesa> articoli = new ArrayList<>();
