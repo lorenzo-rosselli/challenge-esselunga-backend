@@ -1,5 +1,6 @@
 package it.esselunga.gestionespese.resource;
 
+import it.esselunga.gestionespese.dto.AvanzamentoStatoDto;
 import it.esselunga.gestionespese.dto.CreazioneSpesaDto;
 import it.esselunga.gestionespese.dto.ModificaSpesaDto;
 import it.esselunga.gestionespese.dto.SpesaDto;
@@ -64,5 +65,19 @@ public class SpesaResource {
     public SpesaDto modifica(@PathParam("id") String id,
                              @NotNull(message = "Il corpo della richiesta è obbligatorio") @Valid ModificaSpesaDto dto) {
         return spesaService.modifica(id, dto);
+    }
+
+    /**
+     * Avanzamento della spesa allo stato successivo (CREATA → IN_PREPARAZIONE → PRONTA → IN_CONSEGNA → CONSEGNATA).
+     * Il nuovo stato è determinato dal server.
+     *
+     * @return 200 con la spesa aggiornata; 404 se la spesa non esiste;
+     *         409 se la spesa è già CONSEGNATA o è stata modificata nel frattempo
+     */
+    @POST
+    @Path("/{id}/avanza-stato")
+    public SpesaDto avanzaStato(@PathParam("id") String id,
+                                @NotNull(message = "Il corpo della richiesta è obbligatorio") @Valid AvanzamentoStatoDto dto) {
+        return spesaService.avanzaStato(id, dto);
     }
 }

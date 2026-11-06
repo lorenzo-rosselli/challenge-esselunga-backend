@@ -5,6 +5,7 @@ import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.ReturnDocument;
 import com.mongodb.client.model.Updates;
 import io.quarkus.panache.common.Sort;
+import it.esselunga.gestionespese.dto.AvanzamentoStatoDto;
 import it.esselunga.gestionespese.dto.CreazioneSpesaDto;
 import it.esselunga.gestionespese.dto.ModificaSpesaDto;
 import it.esselunga.gestionespese.dto.SpesaDto;
@@ -119,6 +120,97 @@ public class SpesaService {
     }
 
     /**
+     * Avanzamento della spesa allo stato successivo del flusso
+     * CREATA → IN_PREPARAZIONE → PRONTA → IN_CONSEGNA → CONSEGNATA.
+     * <p>
+     * L'aggiornamento è atomico e condizionato a stato e versione letti:
+     * due richieste ravvicinate (es. doppio clic) non possono far avanzare la spesa di due stati.
+     *
+     * @param id  id della spesa (dal percorso della richiesta)
+     * @param dto versione letta dal client
+     * @return spesa aggiornata
+     */
+    public SpesaDto avanzaStato(String id, AvanzamentoStatoDto dto) {
+        ObjectId spesaId = toObjectIdOrNotFound(id);
+        Spesa spesa = spesaRepository.findById(spesaId);
+        if (spesa == null) {
+            throw new NotFoundException("Spesa " + id + " non trovata");
+        }
+
+        StatoSpesa statoAttuale = spesa.getStato();
+        StatoSpesa statoSuccessivo = statoSuccessivo(statoAttuale);
+        if (statoSuccessivo == null) {
+            throw new ClientErrorException("La spesa è già nello stato finale " + statoAttuale
+                    + ": non può avanzare ulteriormente", Response.Status.CONFLICT);
+        }
+
+        Spesa aggiornata = spesaRepository.mongoCollection().findOneAndUpdate(
+                Filters.and(
+                        Filters.eq("_id", spesaId),
+                        Filters.eq("versione", dto.getVersione()),
+                        Filters.eq("stato", statoAttuale.name())),
+                Updates.combine(
+                        Updates.set("stato", statoSuccessivo.name()),
+                        Updates.set("dataUltimaModifica", Instant.now().truncatedTo(ChronoUnit.MILLIS)),
+                        Updates.inc("versione", 1L)),
+                new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER));
+
+        if (aggiornata == null) {
+            throw new ClientErrorException("La spesa è stata modificata nel frattempo (versione attuale "
+                    + spesa.getVersione() + ", versione inviata " + dto.getVersione() + "): ricaricare la spesa e riprovare",
+                    Response.Status.CONFLICT);
+        }
+        return spesaMapper.toDto(aggiornata);
+    }
+
+    /**
+     * @return lo stato successivo nel flusso, oppure null se lo stato è quello finale
+     */
+    private StatoSpesa statoSuccessivo(StatoSpesa stato) {
+        return switch (stato) {
+            case CREATA -> StatoSpesa.IN_PREPARAZIONE;
+            case IN_PREPARAZIONE -> StatoSpesa.PRONTA;
+            case PRONTA -> StatoSpesa.IN_CONSEGNA;
+            case IN_CONSEGNA -> StatoSpesa.CONSEGNATA;
+            case CONSEGNATA -> null;
+        };
+    }
+
+    private void verificaMagazzino(ObjectId magazzinoId) {
+        if (magazzinoRepository.findByIdOptional(magazzinoId).isEmpty()) {
+            throw new BadRequestException("Magazzino " + magazzinoId.toHexString() + " non trovato");
+        }
+    }
+
+    /**
+     * Carica con un'unica query gli articoli della spesa, verificando che non ci siano
+     * articoli ripetuti e che esistano tutti.
+     *
+     * @return articoli indicizzati per id
+     */
+    private Map<ObjectId, Articolo> caricaArticoli(List<ElementoSpesa> elementi) {
+        Set<ObjectId> ids = new HashSet<>();
+        for (ElementoSpesa elemento : elementi) {
+            if (!ids.add(elemento.getArticoloId())) {
+                throw new BadRequestException("L'articolo " + elemento.getArticoloId().toHexString()
+                        + " è presente più volte nella spesa: indicare una sola riga con la quantità totale");
+            }
+        }
+
+        Map<ObjectId, Articolo> articoli = articoloRepository.trovaPerIds(ids).stream()
+                .collect(Collectors.toMap(Articolo::getId, Function.identity()));
+
+        List<String> mancanti = ids.stream()
+                .filter(id -> !articoli.containsKey(id))
+                .map(ObjectId::toHexString)
+                .toList();
+        if (!mancanti.isEmpty()) {
+            throw new BadRequestException("Articoli non trovati: " + String.join(", ", mancanti));
+        }
+        return articoli;
+    }
+
+    /**
      * UC2 - Modifica parziale di una spesa.
      * <p>
      * Sono modificabili nome del cliente e dati di consegna (indirizzo e posizione insieme),
@@ -185,39 +277,5 @@ public class SpesaService {
             throw new NotFoundException("Spesa " + id + " non trovata");
         }
         return new ObjectId(id);
-    }
-
-    private void verificaMagazzino(ObjectId magazzinoId) {
-        if (magazzinoRepository.findByIdOptional(magazzinoId).isEmpty()) {
-            throw new BadRequestException("Magazzino " + magazzinoId.toHexString() + " non trovato");
-        }
-    }
-
-    /**
-     * Carica con un'unica query gli articoli della spesa, verificando che non ci siano
-     * articoli ripetuti e che esistano tutti.
-     *
-     * @return articoli indicizzati per id
-     */
-    private Map<ObjectId, Articolo> caricaArticoli(List<ElementoSpesa> elementi) {
-        Set<ObjectId> ids = new HashSet<>();
-        for (ElementoSpesa elemento : elementi) {
-            if (!ids.add(elemento.getArticoloId())) {
-                throw new BadRequestException("L'articolo " + elemento.getArticoloId().toHexString()
-                        + " è presente più volte nella spesa: indicare una sola riga con la quantità totale");
-            }
-        }
-
-        Map<ObjectId, Articolo> articoli = articoloRepository.trovaPerIds(ids).stream()
-                .collect(Collectors.toMap(Articolo::getId, Function.identity()));
-
-        List<String> mancanti = ids.stream()
-                .filter(id -> !articoli.containsKey(id))
-                .map(ObjectId::toHexString)
-                .toList();
-        if (!mancanti.isEmpty()) {
-            throw new BadRequestException("Articoli non trovati: " + String.join(", ", mancanti));
-        }
-        return articoli;
     }
 }
