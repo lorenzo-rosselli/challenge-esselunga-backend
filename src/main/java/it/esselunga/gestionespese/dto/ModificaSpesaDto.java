@@ -1,20 +1,32 @@
 package it.esselunga.gestionespese.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
 
 /**
- * Richiesta di modifica di una spesa (UC2).
- * Sono modificabili solo i dati di consegna, e solo negli stati CREATA e IN_PREPARAZIONE.
+ * Richiesta di modifica parziale di una spesa (UC2).
+ * <p>
+ * Sono modificabili solo nome del cliente e dati di consegna, e solo negli stati
+ * CREATA e IN_PREPARAZIONE. Il client invia soltanto i campi da cambiare:
+ * quelli assenti (null) restano invariati.
+ * Indirizzo e posizione di consegna vanno modificati insieme, per mantenerli coerenti
+ * (la posizione è usata dal calcolo del percorso, UC4).
  */
 public class ModificaSpesaDto {
 
-    @NotBlank(message = "L'indirizzo di consegna è obbligatorio")
+    /** Se presente, non può essere vuoto. */
+    @Pattern(regexp = ".*\\S.*", message = "Il nome del cliente non può essere vuoto")
+    private String nomeCliente;
+
+    /** Se presente, non può essere vuoto. Va inviato insieme a posizioneConsegna. */
+    @Pattern(regexp = ".*\\S.*", message = "L'indirizzo di consegna non può essere vuoto")
     private String indirizzoConsegna;
 
-    @NotNull(message = "La posizione di consegna è obbligatoria")
+    /** Va inviata insieme a indirizzoConsegna. */
     @Valid
     private PosizioneDto posizioneConsegna;
 
@@ -22,6 +34,26 @@ public class ModificaSpesaDto {
     @NotNull(message = "La versione è obbligatoria")
     @PositiveOrZero(message = "La versione non può essere negativa")
     private Long versione;
+
+    @JsonIgnore
+    @AssertTrue(message = "Indicare almeno un campo da modificare (nomeCliente oppure indirizzoConsegna e posizioneConsegna)")
+    public boolean isAlmenoUnCampoDaModificare() {
+        return nomeCliente != null || indirizzoConsegna != null || posizioneConsegna != null;
+    }
+
+    @JsonIgnore
+    @AssertTrue(message = "Indirizzo e posizione di consegna devono essere modificati insieme")
+    public boolean isConsegnaCompleta() {
+        return (indirizzoConsegna == null) == (posizioneConsegna == null);
+    }
+
+    public String getNomeCliente() {
+        return nomeCliente;
+    }
+
+    public void setNomeCliente(String nomeCliente) {
+        this.nomeCliente = nomeCliente;
+    }
 
     public String getIndirizzoConsegna() {
         return indirizzoConsegna;
