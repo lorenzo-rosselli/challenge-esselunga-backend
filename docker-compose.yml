@@ -1,6 +1,8 @@
-# Avvio completo: backend + MongoDB
+# Avvio completo: MongoDB + backend + frontend
 #   1) ./mvnw package          (genera target/quarkus-app)
 #   2) docker compose up --build
+# Frontend: http://localhost:4200   Backend: http://localhost:8080
+# Il frontend viene costruito dalla cartella ../frontend (repository affiancato al backend).
 services:
 
   mongodb:
@@ -27,9 +29,21 @@ services:
     environment:
       MONGODB_URI: mongodb://mongodb:27017
       MONGODB_DATABASE: gestione-spese
+      CORS_ORIGINS: http://localhost:4200
     depends_on:
       mongodb:
         condition: service_healthy
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    image: gestione-spese-online-frontend:latest
+    container_name: gestione-spese-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
 
 volumes:
   mongo-data:
