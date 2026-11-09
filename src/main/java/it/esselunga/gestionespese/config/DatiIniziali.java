@@ -39,9 +39,17 @@ public class DatiIniziali {
     }
 
     private void caricaMagazzini() {
+        // Locker Esselunga dell'area Firenze - Prato - Pistoia; coordinate da OpenStreetMap
         List<Magazzino> magazzini = List.of(
-                magazzino("Magazzino Pioltello", 45.4977, 9.3301),
-                magazzino("Magazzino Biandrate", 45.4528, 8.4651));
+                magazzino("Campi Bisenzio", 43.82168, 11.12161),
+                magazzino("Firenze Osmannoro", 43.81062, 11.17371),
+                magazzino("Firenze Via Canova", 43.77954, 11.19867),
+                magazzino("Prato Leonardo", 43.86479, 11.09654),
+                magazzino("Firenze Novoli", 43.79122, 11.22319),
+                magazzino("Sesto Fiorentino", 43.82637, 11.21228),
+                magazzino("Prato Viale Galilei", 43.90354, 11.10815),
+                magazzino("Pistoia Porta Nuova", 43.92326, 10.91338),
+                magazzino("Firenze Gignoro", 43.76974, 11.29915));
         int inseriti = 0;
         for (Magazzino magazzino : magazzini) {
             if (!magazzinoRepository.isPresent(magazzino.getNome())) {
@@ -61,7 +69,13 @@ public class DatiIniziali {
                 articolo("Mele 1kg", "Mele Golden Delicious, sacchetto da 1 kg", "1.99"),
                 articolo("Passata 500g", "Passata di pomodoro italiano", "1.09"),
                 articolo("Olio 1L", "Olio extravergine di oliva", "8.90"),
-                articolo("Caffè 250g", "Caffè macinato per moka", "3.49"));
+                articolo("Caffè 250g", "Caffè macinato per moka", "3.49"),
+                articolo("Prosciutto 100g", "Prosciutto cotto a fette, vaschetta da 100 g", "2.49"),
+                articolo("Petto di pollo 500g", "Petto di pollo a fette, vaschetta da 500 g", "5.90"),
+                articolo("Tonno 3x80g", "Tonno all'olio di oliva, confezione da 3 scatolette", "3.29"),
+                articolo("Sale 1kg", "Sale marino fino iodato", "0.49"),
+                articolo("Biscotti 700g", "Biscotti frollini, pacco da 700 g", "2.29"),
+                articolo("Acqua 6x1,5L", "Acqua minerale naturale, cassa da 6 bottiglie da 1,5 litri", "1.99"));
         int inseriti = 0;
         for (Articolo articolo : articoli) {
             if (!articoloRepository.isPresent(articolo.getNome())) {

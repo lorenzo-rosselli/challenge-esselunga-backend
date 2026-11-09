@@ -43,16 +43,18 @@ class MagazzinoResourceTest {
                 .when().get("/magazzini")
                 .then()
                 .statusCode(200)
-                .body("$", hasSize(2))
-                .body("nome", contains(DatiTest.MAGAZZINO_BIANDRATE, DatiTest.MAGAZZINO_PIOLTELLO))
+                .body("$", hasSize(9))
+                .body("nome", contains("Campi Bisenzio", "Firenze Gignoro", "Firenze Novoli",
+                        "Firenze Osmannoro", "Firenze Via Canova", "Pistoia Porta Nuova",
+                        "Prato Leonardo", "Prato Viale Galilei", "Sesto Fiorentino"))
                 .body("[0].posizione.latitudine", notNullValue())
                 .body("[0].posizione.longitudine", notNullValue());
     }
 
     @Test
     void percorsoSenzaSpesePronteNonHaTappe() {
-        String magazzinoId = DatiTest.idMagazzino(DatiTest.MAGAZZINO_PIOLTELLO);
-        DatiTest.creaSpesa("Cliente non pronta", magazzinoId, 45.46, 9.19); // resta CREATA
+        String magazzinoId = DatiTest.idMagazzino(DatiTest.MAGAZZINO_NOVOLI);
+        DatiTest.creaSpesa("Cliente non pronta", magazzinoId, 43.776, 11.255); // resta CREATA
 
         given()
                 .when().get("/magazzini/" + magazzinoId + "/percorso")
@@ -65,22 +67,22 @@ class MagazzinoResourceTest {
 
     @Test
     void percorsoVisitaLeSpesePronteDalPiuVicinoERientraAlMagazzino() {
-        String pioltello = DatiTest.idMagazzino(DatiTest.MAGAZZINO_PIOLTELLO); // 45.4977, 9.3301
-        String biandrate = DatiTest.idMagazzino(DatiTest.MAGAZZINO_BIANDRATE);
+        String novoli = DatiTest.idMagazzino(DatiTest.MAGAZZINO_NOVOLI); // 43.79122, 11.22319
+        String prato = DatiTest.idMagazzino(DatiTest.MAGAZZINO_PRATO);
 
         // Create in ordine diverso da quello atteso nel percorso
-        String lontana = DatiTest.creaSpesa("Lontana", pioltello, 45.07, 7.68);
-        String vicina = DatiTest.creaSpesa("Vicina", pioltello, 45.49, 9.32);
-        String media = DatiTest.creaSpesa("Media", pioltello, 45.46, 9.19);
+        String lontana = DatiTest.creaSpesa("Lontana", novoli, 43.93, 10.91);
+        String vicina = DatiTest.creaSpesa("Vicina", novoli, 43.795, 11.225);
+        String media = DatiTest.creaSpesa("Media", novoli, 43.776, 11.255);
         DatiTest.portaAPronta(lontana);
         DatiTest.portaAPronta(vicina);
         DatiTest.portaAPronta(media);
 
         // Spesa pronta di un altro magazzino: non deve comparire nel percorso
-        DatiTest.portaAPronta(DatiTest.creaSpesa("Altro magazzino", biandrate, 45.45, 8.46));
+        DatiTest.portaAPronta(DatiTest.creaSpesa("Altro magazzino", prato, 43.87, 11.09));
 
         given()
-                .when().get("/magazzini/" + pioltello + "/percorso")
+                .when().get("/magazzini/" + novoli + "/percorso")
                 .then()
                 .statusCode(200)
                 .body("tappe", hasSize(3))

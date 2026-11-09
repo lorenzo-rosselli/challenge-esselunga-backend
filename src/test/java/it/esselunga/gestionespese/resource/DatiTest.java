@@ -17,8 +17,8 @@ import static io.restassured.RestAssured.given;
  */
 final class DatiTest {
 
-    static final String MAGAZZINO_PIOLTELLO = "Magazzino Pioltello";
-    static final String MAGAZZINO_BIANDRATE = "Magazzino Biandrate";
+    static final String MAGAZZINO_NOVOLI = "Firenze Novoli";   // 43.79122, 11.22319
+    static final String MAGAZZINO_PRATO = "Prato Leonardo";    // 43.86479, 11.09654
     static final String LATTE = "Latte 1L";       // 1.29
     static final String SPAGHETTI = "Spaghetti 500g"; // 0.89
 

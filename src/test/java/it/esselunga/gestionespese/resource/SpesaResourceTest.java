@@ -40,7 +40,7 @@ class SpesaResourceTest {
     @BeforeEach
     void prepara() {
         spesaRepository.deleteAll();
-        magazzinoId = DatiTest.idMagazzino(DatiTest.MAGAZZINO_PIOLTELLO);
+        magazzinoId = DatiTest.idMagazzino(DatiTest.MAGAZZINO_NOVOLI);
         latteId = DatiTest.idArticolo(DatiTest.LATTE);
         spaghettiId = DatiTest.idArticolo(DatiTest.SPAGHETTI);
     }
