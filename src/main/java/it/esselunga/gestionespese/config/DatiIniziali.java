@@ -44,7 +44,7 @@ public class DatiIniziali {
                 magazzino("Campi Bisenzio", 43.82168, 11.12161),
                 magazzino("Firenze Osmannoro", 43.81062, 11.17371),
                 magazzino("Firenze Via Canova", 43.77954, 11.19867),
-                magazzino("Prato Leonardo", 43.86479, 11.09654),
+                magazzino("Prato Leonardo da Vinci", 43.86479, 11.09654),
                 magazzino("Firenze Novoli", 43.79122, 11.22319),
                 magazzino("Sesto Fiorentino", 43.82637, 11.21228),
                 magazzino("Prato Viale Galilei", 43.90354, 11.10815),

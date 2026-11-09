@@ -46,7 +46,7 @@ class MagazzinoResourceTest {
                 .body("$", hasSize(9))
                 .body("nome", contains("Campi Bisenzio", "Firenze Gignoro", "Firenze Novoli",
                         "Firenze Osmannoro", "Firenze Via Canova", "Pistoia Porta Nuova",
-                        "Prato Leonardo", "Prato Viale Galilei", "Sesto Fiorentino"))
+                        "Prato Leonardo da Vinci", "Prato Viale Galilei", "Sesto Fiorentino"))
                 .body("[0].posizione.latitudine", notNullValue())
                 .body("[0].posizione.longitudine", notNullValue());
     }
