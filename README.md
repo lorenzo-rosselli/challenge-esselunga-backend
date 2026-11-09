@@ -63,6 +63,7 @@ Stati della spesa, con flusso lineare: `CREATA` → `IN_PREPARAZIONE` → `PRONT
 | `PATCH` | `/spese/{id}` | Modifica parziale di una spesa | UC2 |
 | `GET` | `/spese` | Lista di tutte le spese con il loro stato | UC3 |
 | `POST` | `/spese/{id}/avanza-stato` | Avanzamento della spesa allo stato successivo | estensione |
+| `GET` | `/magazzini/{id}/percorso` | Percorso di consegna delle spese pronte del magazzino | UC4 |
 | `GET` | `/magazzini` | Elenco dei magazzini | supporto al frontend |
 | `GET` | `/articoli` | Catalogo degli articoli | supporto al frontend |
 
@@ -93,6 +94,15 @@ Gli errori sono restituiti con i codici HTTP standard (`400` richiesta non valid
 
 - Il servizio restituisce **l'intera lista delle spese**, ordinata dalla più recente; **filtri e ordinamenti sono gestiti dal frontend**. La scelta è motivata dal volume di dati contenuto previsto per la challenge: con volumi elevati sarebbe necessario spostare filtri, ordinamento e paginazione sul servizio.
 
+#### Percorso di consegna (UC4)
+
+- Il percorso è calcolato **per magazzino**: parte dal magazzino, visita le consegne di tutte le spese `PRONTA` di quel magazzino e **rientra al magazzino**.
+- L'ordine delle consegne è calcolato con un algoritmo su **grafo**: il magazzino e le consegne sono i punti del grafo e ogni punto ha la lista di tutti gli altri. Si parte dal magazzino, si sceglie il punto più vicino, si elimina il punto di provenienza da tutte le liste e si ripete finché non restano punti da visitare; infine si rientra al magazzino.
+- Per scegliere il punto più vicino si usa il **teorema di Pitagora su latitudine e longitudine**: è un'approssimazione (un grado di longitudine non vale quanto uno di latitudine), accettata perché il cliente ammette qualsiasi algoritmo, anche semplificato.
+- Le distanze restituite (per tappa, rientro e totale) sono invece in **km in linea d'aria** (formula dell'emisenoverso), perché più leggibili per l'utente.
+- Il servizio restituisce l'ordine delle tappe; il **tracciato stradale** mostrato sulla mappa è disegnato dal frontend seguendo lo stesso ordine.
+- Se il magazzino non ha spese pronte, il percorso non ha tappe e la distanza è 0.
+
 #### Ciclo di vita della spesa (estensione)
 
 - Il cliente non richiede esplicitamente un servizio di cambio stato, ma è necessario perché una spesa possa diventare `PRONTA` ed entrare nel calcolo del percorso (UC4).
@@ -104,3 +114,36 @@ Gli errori sono restituiti con i codici HTTP standard (`400` richiesta non valid
 
 - Il dominio contiene comunque delle relazioni (Spesa → Magazzino, elemento → Articolo). In assenza di foreign key, **l'integrità referenziale e la validazione sono garantite a livello applicativo**: validazione formale dei dati in ingresso e controlli di coerenza prima del salvataggio.
 - L'istanza MongoDB del `docker-compose.yml` è **senza autenticazione**, in quanto pensata per l'esecuzione in locale ai fini della challenge.
+- Il backend accetta chiamate dal browser (**CORS**) solo dall'origine del frontend, `http://localhost:4200`, configurabile con la variabile d'ambiente `CORS_ORIGINS`.
+
+## Avvio del progetto
+
+### Sviluppo
+
+Con Docker attivo (Quarkus Dev Services avvia automaticamente un'istanza MongoDB):
+
+```bash
+./mvnw quarkus:dev
+```
+
+Il backend è disponibile su `http://localhost:8080`; all'avvio vengono caricati i dati di partenza (magazzini e articoli).
+
+### Test
+
+I test JUnit verificano i servizi REST e richiedono Docker attivo (MongoDB di test avviato da Dev Services):
+
+```bash
+./mvnw test
+```
+
+### Docker Compose
+
+Il `docker-compose.yml` avvia MongoDB, backend e frontend. Il frontend viene costruito dalla cartella `../frontend`, quindi le cartelle `backend` e `frontend` devono trovarsi una accanto all'altra.
+
+```bash
+./mvnw package
+docker compose up --build
+```
+
+- Frontend: `http://localhost:4200`
+- Backend: `http://localhost:8080`

@@ -8,6 +8,8 @@ services:
   mongodb:
     image: mongo:8.0
     container_name: gestione-spese-mongodb
+    # --quiet: niente log per ogni connessione aperta/chiusa (es. quelle dell'healthcheck ogni 10s)
+    command: ["mongod", "--quiet"]
     ports:
       - "27017:27017"
     volumes:
