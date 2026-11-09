@@ -44,7 +44,7 @@ public class DatiIniziali {
                 magazzino("Magazzino Biandrate", 45.4528, 8.4651));
         int inseriti = 0;
         for (Magazzino magazzino : magazzini) {
-            if (!magazzinoRepository.isPreent(magazzino.getNome())) {
+            if (!magazzinoRepository.isPresent(magazzino.getNome())) {
                 magazzinoRepository.persist(magazzino);
                 inseriti++;
             }
@@ -64,7 +64,7 @@ public class DatiIniziali {
                 articolo("Caffè 250g", "Caffè macinato per moka", "3.49"));
         int inseriti = 0;
         for (Articolo articolo : articoli) {
-            if (!articoloRepository.isPreent(articolo.getNome())) {
+            if (!articoloRepository.isPresent(articolo.getNome())) {
                 articoloRepository.persist(articolo);
                 inseriti++;
             }

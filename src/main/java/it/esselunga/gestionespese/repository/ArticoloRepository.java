@@ -21,7 +21,7 @@ public class ArticoloRepository implements PanacheMongoRepository<Articolo> {
      * @param nome nome da cercare (confronto esatto)
      * @return true se nella collection "articoli" è presente almeno un documento con quel nome
      */
-    public boolean isPreent(String nome) {
+    public boolean isPresent(String nome) {
         return count("nome", nome) > 0;
     }
 
