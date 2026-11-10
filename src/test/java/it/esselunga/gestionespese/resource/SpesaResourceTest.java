@@ -20,7 +20,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 
 /**
- * Test delle API delle spese: creazione (UC1), lista (UC3), modifica (UC2) e avanzamento di stato.
+ * Test delle API delle spese: creazione, lista, modifica e avanzamento di stato.
  */
 @QuarkusTest
 class SpesaResourceTest {
@@ -262,7 +262,7 @@ class SpesaResourceTest {
     }
 
     // ------------------------------------------------------------------
-    // POST /spese/{id}/avanza-stato
+    // PATCH /spese/{id}/avanza-stato
     // ------------------------------------------------------------------
 
     @Nested
@@ -276,7 +276,7 @@ class SpesaResourceTest {
             for (int versione = 0; versione < statiAttesi.length; versione++) {
                 given().contentType(ContentType.JSON)
                         .body("{ \"versione\": " + versione + " }")
-                        .when().post("/spese/" + spesaId + "/avanza-stato")
+                        .when().patch("/spese/" + spesaId + "/avanza-stato")
                         .then()
                         .statusCode(200)
                         .body("stato", equalTo(statiAttesi[versione]))
@@ -285,7 +285,7 @@ class SpesaResourceTest {
 
             given().contentType(ContentType.JSON)
                     .body("{ \"versione\": 4 }")
-                    .when().post("/spese/" + spesaId + "/avanza-stato")
+                    .when().patch("/spese/" + spesaId + "/avanza-stato")
                     .then()
                     .statusCode(409)
                     .body("messaggio", containsString("stato finale"));
@@ -297,11 +297,11 @@ class SpesaResourceTest {
             String richiesta = "{ \"versione\": 0 }";
 
             given().contentType(ContentType.JSON).body(richiesta)
-                    .when().post("/spese/" + spesaId + "/avanza-stato")
+                    .when().patch("/spese/" + spesaId + "/avanza-stato")
                     .then().statusCode(200).body("stato", equalTo("IN_PREPARAZIONE"));
 
             given().contentType(ContentType.JSON).body(richiesta)
-                    .when().post("/spese/" + spesaId + "/avanza-stato")
+                    .when().patch("/spese/" + spesaId + "/avanza-stato")
                     .then().statusCode(409);
         }
 
@@ -309,7 +309,7 @@ class SpesaResourceTest {
         void spesaInesistenteRestituisce404() {
             given().contentType(ContentType.JSON)
                     .body("{ \"versione\": 0 }")
-                    .when().post("/spese/" + DatiTest.ID_INESISTENTE + "/avanza-stato")
+                    .when().patch("/spese/" + DatiTest.ID_INESISTENTE + "/avanza-stato")
                     .then()
                     .statusCode(404);
         }

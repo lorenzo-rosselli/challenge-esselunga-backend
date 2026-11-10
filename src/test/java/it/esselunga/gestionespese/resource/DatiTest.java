@@ -79,7 +79,7 @@ final class DatiTest {
     static void avanzaStato(String spesaId, long versione) {
         given().contentType(ContentType.JSON)
                 .body("{ \"versione\": " + versione + " }")
-                .when().post("/spese/" + spesaId + "/avanza-stato")
+                .when().patch("/spese/" + spesaId + "/avanza-stato")
                 .then().statusCode(200);
     }
 

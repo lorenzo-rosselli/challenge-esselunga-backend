@@ -74,7 +74,7 @@ public class SpesaResource {
      * @return 200 con la spesa aggiornata; 404 se la spesa non esiste;
      *         409 se la spesa è già CONSEGNATA o è stata modificata nel frattempo
      */
-    @POST
+    @PATCH
     @Path("/{id}/avanza-stato")
     public SpesaDto avanzaStato(@PathParam("id") String id,
                                 @NotNull(message = "Il corpo della richiesta è obbligatorio") @Valid AvanzamentoStatoDto dto) {

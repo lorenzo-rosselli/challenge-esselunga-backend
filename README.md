@@ -62,7 +62,7 @@ Stati della spesa, con flusso lineare: `CREATA` → `IN_PREPARAZIONE` → `PRONT
 | `POST` | `/spese` | Creazione di una spesa | UC1 |
 | `PATCH` | `/spese/{id}` | Modifica parziale di una spesa | UC2 |
 | `GET` | `/spese` | Lista di tutte le spese con il loro stato | UC3 |
-| `POST` | `/spese/{id}/avanza-stato` | Avanzamento della spesa allo stato successivo | estensione |
+| `PATCH` | `/spese/{id}/avanza-stato` | Avanzamento della spesa allo stato successivo | estensione |
 | `GET` | `/magazzini/{id}/percorso` | Percorso di consegna delle spese pronte del magazzino | UC4 |
 | `GET` | `/magazzini` | Elenco dei magazzini | supporto al frontend |
 | `GET` | `/articoli` | Catalogo degli articoli | supporto al frontend |
