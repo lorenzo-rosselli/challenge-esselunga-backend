@@ -211,7 +211,7 @@ public class SpesaService {
     }
 
     /**
-     * UC2 - Modifica parziale di una spesa.
+     * Modifica parziale di una spesa.
      * <p>
      * Sono modificabili nome del cliente e dati di consegna (indirizzo e posizione insieme),
      * solo se la spesa è in uno stato modificabile e la versione inviata coincide con quella salvata.

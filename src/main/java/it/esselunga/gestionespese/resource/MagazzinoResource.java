@@ -38,7 +38,7 @@ public class MagazzinoResource {
     }
 
     /**
-     * UC4 - Percorso di consegna delle spese PRONTE del magazzino:
+     * Percorso di consegna delle spese PRONTE del magazzino:
      * partenza dal magazzino, tappe in ordine di consegna, rientro al magazzino.
      *
      * @return 200 con il percorso (senza tappe se non ci sono spese pronte); 404 se il magazzino non esiste

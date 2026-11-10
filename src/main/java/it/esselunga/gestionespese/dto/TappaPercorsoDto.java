@@ -1,7 +1,7 @@
 package it.esselunga.gestionespese.dto;
 
 /**
- * Tappa del percorso di consegna (UC4): una spesa da consegnare.
+ * Tappa del percorso di consegna: una spesa da consegnare.
  */
 public class TappaPercorsoDto {
 

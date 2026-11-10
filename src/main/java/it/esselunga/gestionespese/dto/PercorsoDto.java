@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Percorso di consegna di un magazzino (UC4).
+ * Percorso di consegna di un magazzino.
  * Parte dal magazzino, visita le tappe nell'ordine indicato e rientra al magazzino.
  */
 public class PercorsoDto {

@@ -19,7 +19,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 
 /**
- * Test delle API dei magazzini: GET /magazzini e GET /magazzini/{id}/percorso (UC4).
+ * Test delle API dei magazzini: GET /magazzini e GET /magazzini/{id}/percorso.
  */
 @QuarkusTest
 class MagazzinoResourceTest {

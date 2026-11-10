@@ -4,7 +4,7 @@ import io.quarkus.mongodb.panache.common.MongoEntity;
 import org.bson.types.ObjectId;
 
 /**
- * Magazzino: punto di partenza e di rientro del percorso di consegna (UC4).
+ * Magazzino: punto di partenza e di rientro del percorso di consegna.
  */
 @MongoEntity(collection = "magazzini")
 public class Magazzino {

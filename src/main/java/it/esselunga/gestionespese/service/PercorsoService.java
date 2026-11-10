@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * UC4 - Calcolo del percorso di consegna.
+ * Calcolo del percorso di consegna.
  * <p>
  * I punti (magazzino e consegne delle spese PRONTE) formano un grafo completo: ogni punto
  * ha la lista di tutti gli altri punti raggiungibili.
