@@ -3,6 +3,8 @@
 #   2) docker compose up --build
 # Frontend: http://localhost:4200   Backend: http://localhost:8080
 # Il frontend viene costruito dalla cartella ../frontend (repository affiancato al backend).
+name: gestione-spese-online
+
 services:
 
   mongodb:
